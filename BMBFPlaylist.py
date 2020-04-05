@@ -11,3 +11,6 @@ class BMBFPlaylist(object):
 
     def get_song_authors(self):
         return self.song_list.get_song_authors()
+
+    def get_song_list(self):
+        return self.song_list

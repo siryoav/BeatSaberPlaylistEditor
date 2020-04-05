@@ -11,3 +11,6 @@ class BMBFConfig(object):
 
     def get_song_authors(self):
         return self.playlists.get_song_authors()
+
+    def get_playlists(self):
+        return self.playlists.get_playlists()

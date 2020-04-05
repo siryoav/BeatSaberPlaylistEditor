@@ -17,3 +17,6 @@ class BMBFSongList(object):
         return [song.get_song_author()
                 for song
                 in self.songs]
+
+    def get_songs(self):
+        return self.songs

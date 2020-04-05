@@ -34,3 +34,9 @@ class BMBFPlaylists(object):
 
     def get_song_authors(self):
         return self.song_authors
+
+    def get_playlists(self):
+        return [playlist
+                for playlist
+                in self.playlists
+                if playlist.id not in BMBFPlaylists.default_playlists]

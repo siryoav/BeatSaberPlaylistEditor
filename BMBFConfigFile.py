@@ -10,3 +10,6 @@ class BMBFConfigFile(object):
 
     def get_song_authors(self):
         return self.config.get_song_authors()
+
+    def get_playlists(self):
+        return self.config.get_playlists()
