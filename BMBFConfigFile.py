@@ -3,7 +3,10 @@ from BMBFConfig import BMBFConfig
 
 class BMBFConfigFile(object):
     def __init__(self, data):
-        is_committed = data['IsCommitted']
-        config = BMBFConfig(data['Config'])
-        sync_config = data['SyncConfig']
-        beat_saber_version = data['BeatSaberVersion']
+        self.is_committed = data['IsCommitted']
+        self.config = BMBFConfig(data['Config'])
+        self.sync_config = data['SyncConfig']
+        self.beat_saber_version = data['BeatSaberVersion']
+
+    def get_song_authors(self):
+        return self.config.get_song_authors()
