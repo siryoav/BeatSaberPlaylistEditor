@@ -8,15 +8,18 @@ import yaml
 from BMBFConfigFile import BMBFConfigFile
 from EditorConfig import EditorConfig
 
+
 def ordered_dump(data, stream=None, Dumper=yaml.Dumper, **kwds):
     class OrderedDumper(Dumper):
         pass
+
     def _dict_representer(dumper, data):
         return dumper.represent_mapping(
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             data.items())
     OrderedDumper.add_representer(OrderedDict, _dict_representer)
     return yaml.dump(data, stream, OrderedDumper, **kwds)
+
 
 class PlaylistEditor(object):
     def __init__(self, args):
@@ -60,8 +63,12 @@ class PlaylistEditor(object):
     def normalize_song_author(song_author):
         return PlaylistEditor.remove_non_alphabet.sub('', song_author.lower())
 
+    @staticmethod
+    def get_pre_defined__authors():
+        return set(EditorConfig().config['PreDefinedSongAuthors'])
+
     def print_song_authors(self):
-        song_authors_set = self.config_file.get_song_authors().union(set(EditorConfig().config['PreDefinedSongAuthors']))
+        song_authors_set = self.config_file.get_song_authors().union(PlaylistEditor.get_pre_defined__authors())
 
         song_authors_set = set([
             self.transform_song_author(song_author)
@@ -81,20 +88,26 @@ class PlaylistEditor(object):
             elif not self.args.song_id:
                 song_data = song.name
             else:
-                song_data = (song.name, song.id)
+                song_data = ('', '- {} # {} @ {}'.format(song.id, song.name, song.level_author_name))
         else:
             song_data = song
         bisect.insort(playlists[list_name], song_data)
 
+    excluded_guesses = EditorConfig().config['ExcludedGuesses']
+
     def song_author_guesser(self, song, normalized_song_authors):
         song_author_guesses = set()
         for song_author, normalized_song_author in normalized_song_authors.items():
+            if normalized_song_author in PlaylistEditor.excluded_guesses:
+                continue
             if normalized_song_author in PlaylistEditor.normalize_song_author(song.name):
                 song_author_guesses.add(song_author)
             if normalized_song_author in PlaylistEditor.normalize_song_author(song.level_author_name):
                 song_author_guesses.add(song_author)
 
         for normalized_song_author, song_author in self.normalized_reversed_song_author_map.items():
+            if normalized_song_author in PlaylistEditor.excluded_guesses:
+                continue
             if normalized_song_author in PlaylistEditor.normalize_song_author(song.name):
                 song_author_guesses.add(song_author)
             if normalized_song_author in PlaylistEditor.normalize_song_author(song.level_author_name):
@@ -151,7 +164,6 @@ class PlaylistEditor(object):
                     self.add_safe_to_playlists(new_playlists, 'Unknown', song)
                     continue
                 self.add_safe_to_playlists(new_playlists, song_authors_dict[song.song_author_name], song)
-
 
         print(ordered_dump(new_pre_defined_playlists, Dumper=yaml.SafeDumper))
         print(ordered_dump(new_playlists, Dumper=yaml.SafeDumper))
