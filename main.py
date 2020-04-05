@@ -11,6 +11,17 @@ def correct_first_letter(m):
     return m.group(1) + m.group(2).upper()
 
 
+def transform_song_author(song_author, args, reversed_song_author_map):
+    if args.c:
+        song_author = re.sub(r"(^|\s)(\S)", correct_first_letter, song_author)
+    if args.s:
+        song_author = song_author.strip()
+
+    song_author = song_author if song_author not in reversed_song_author_map else reversed_song_author_map[song_author]
+
+    return song_author
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', action='store_true', help='Print song authors')
@@ -33,17 +44,12 @@ def main():
 
     if args.a:
         song_authors_set = config_file.get_song_authors()
-        if args.c:
-            song_authors_set = set(map(lambda song_author: re.sub(r"(^|\s)(\S)", correct_first_letter, song_author),
-                                       song_authors_set))
-        if args.s:
-            song_authors_set = set(map(lambda song_author: song_author.strip(),
-                                       song_authors_set))
 
-        song_authors_set = set(map(lambda song_author: song_author \
-            if song_author not in reversed_song_author_map else \
-            reversed_song_author_map[song_author],
-                                   song_authors_set))
+        song_authors_set = set([
+            transform_song_author(song_author, args, reversed_song_author_map)
+            for song_author
+            in song_authors_set
+        ])
 
         song_authors = sorted(list(song_authors_set))
         print('\n'.join(song_authors))
