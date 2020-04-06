@@ -39,7 +39,7 @@ class PlaylistEditor(object):
 
         with open(config_file_path, 'rb') as f:
             data = json.load(f)
-            self.config_file = BMBFConfigFile(data)
+            self.config_file = BMBFConfigFile.load(data)
 
     @staticmethod
     def correct_first_letter(m):
@@ -63,12 +63,8 @@ class PlaylistEditor(object):
     def normalize_song_author(song_author):
         return PlaylistEditor.remove_non_alphabet.sub('', song_author.lower())
 
-    @staticmethod
-    def get_pre_defined__authors():
-        return set(EditorConfig().config['PreDefinedSongAuthors'])
-
     def print_song_authors(self):
-        song_authors_set = self.config_file.get_song_authors().union(PlaylistEditor.get_pre_defined__authors())
+        song_authors_set = self.config_file.get_song_authors()
 
         song_authors_set = set([
             self.transform_song_author(song_author)
@@ -115,8 +111,8 @@ class PlaylistEditor(object):
 
         return song_author_guesses
 
-    def print_playlists(self):
-        song_authors_set = self.config_file.get_song_authors().union(set(EditorConfig().config['PreDefinedSongAuthors']))
+    def order_playlists(self):
+        song_authors_set = self.config_file.get_song_authors()
 
         song_authors_dict = {
             song_author: self.transform_song_author(song_author)
@@ -164,6 +160,14 @@ class PlaylistEditor(object):
                     self.add_safe_to_playlists(new_playlists, 'Unknown', song)
                     continue
                 self.add_safe_to_playlists(new_playlists, song_authors_dict[song.song_author_name], song)
+        return new_pre_defined_playlists, new_playlists
 
+    def print_playlists(self):
+        new_pre_defined_playlists, new_playlists = self.order_playlists()
         print(ordered_dump(new_pre_defined_playlists, Dumper=yaml.SafeDumper))
         print(ordered_dump(new_playlists, Dumper=yaml.SafeDumper))
+
+    def print_new_config_file(self):
+        new_pre_defined_playlists, new_playlists = self.order_playlists()
+        self.config_file.set_new_playlists(new_pre_defined_playlists, new_playlists)
+        print(self.config_file.dump())
