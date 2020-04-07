@@ -19,8 +19,21 @@ class BMBFPlaylist(object):
            data['IsCoverLoaded']
         )
 
+    @classmethod
+    def dump(cls, data):
+        return {
+            'PlaylistID': data.id,
+            'PlaylistName': data.name,
+            'SongList': BMBFSongList.dump(data.song_list),
+            'CoverImageBytes': data.cover_image_bytes,
+            'IsCoverLoaded': data.is_cover_loaded,
+        }
+
     def get_song_authors(self):
         return self.song_list.get_song_authors()
 
     def get_song_list(self):
         return self.song_list
+
+    def add_song(self, song):
+        self.song_list.add_song(song)

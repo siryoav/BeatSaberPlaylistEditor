@@ -169,5 +169,5 @@ class PlaylistEditor(object):
 
     def print_new_config_file(self):
         new_pre_defined_playlists, new_playlists = self.order_playlists()
-        self.config_file.set_new_playlists(new_pre_defined_playlists, new_playlists)
-        print(self.config_file.dump())
+        self.config_file.get_new_playlists(new_pre_defined_playlists, new_playlists)
+        print(json.dumps(BMBFConfigFile.dump(self.config_file), indent=4))

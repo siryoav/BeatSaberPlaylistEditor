@@ -18,5 +18,19 @@ class BMBFSong(object):
             data['CustomSongPath'],
         )
 
+    @classmethod
+    def dump(cls, data):
+        return {
+            'SongID': data.id,
+            'SongName': data.name,
+            'SongSubName': data.sub_name,
+            'SongAuthorName': data.song_author_name,
+            'LevelAuthorName': data.level_author_name,
+            'CustomSongPath': data.custom_song_path,
+        }
+
     def get_song_author(self):
         return self.song_author_name
+
+    def __lt__(self, other):
+        return self.name < other.name

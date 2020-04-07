@@ -21,6 +21,14 @@ class BMBFSongList(object):
         ]
         return song_list
 
+    @classmethod
+    def dump(cls, data):
+        return [
+            BMBFSong.dump(song)
+            for song
+            in data.songs
+        ]
+
     def get_song_authors(self):
         return [
             song.get_song_author()

@@ -19,11 +19,21 @@ class BMBFConfig(object):
             data['TextChanges'],
         )
 
+    @classmethod
+    def dump(cls, data):
+        return {
+            'Playlists': BMBFPlaylists.dump(data.playlists),
+            'Saber': data.saber,
+            'LeftColor': data.left_color,
+            'RightColor': data.right_color,
+            'TextChanges': data.text_changes,
+        }
+
     def get_song_authors(self, playlist_id=BMBFPlaylists.custom_playlist):
         return self.playlists.get_song_authors(playlist_id)
 
     def get_playlists(self):
         return self.playlists.get_playlists()
 
-    def set_new_playlists(self, new_pre_defined_playlists, new_playlists):
-        self.playlists.set_new_playlists(new_pre_defined_playlists, new_playlists)
+    def get_new_playlists(self, new_pre_defined_playlists, new_playlists):
+        self.playlists = self.playlists.get_new_playlists(new_pre_defined_playlists, new_playlists)

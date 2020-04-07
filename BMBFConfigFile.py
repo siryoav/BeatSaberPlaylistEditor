@@ -18,11 +18,21 @@ class BMBFConfigFile(object):
             data['BeatSaberVersion'],
         )
 
+    @classmethod
+    def dump(cls, data):
+        return {
+            'IsCommitted': data.is_committed,
+            'Config': BMBFConfig.dump(data.config),
+            'SyncConfig': data.sync_config,
+            'BeatSaberVersion': data.beat_saber_version,
+        }
+
     def get_song_authors(self, playlist_id=BMBFPlaylists.custom_playlist):
         return self.config.get_song_authors(playlist_id)
 
     def get_playlists(self):
         return self.config.get_playlists()
 
-    def set_new_playlists(self, new_pre_defined_playlists, new_playlists):
-        self.config.set_new_playlists(new_pre_defined_playlists, new_playlists)
+    def get_new_playlists(self, new_pre_defined_playlists, new_playlists):
+        self.config.get_new_playlists(new_pre_defined_playlists, new_playlists)
+
