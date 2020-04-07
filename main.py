@@ -1,10 +1,13 @@
 import argparse
+import yaml
 
+import EditorConfig
 from PlaylistEditor import PlaylistEditor
 
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-e', action='store_true', help='Print editor default config')
     parser.add_argument('-a', action='store_true', help='Print song authors')
     parser.add_argument('-c', action='store_true', help='Capital letters in author\'s name')
     parser.add_argument('-s', action='store_true', help='Strip whitespaces from author\'s name')
@@ -17,8 +20,11 @@ def main():
     parser.add_argument('file', action='store', type=str, help='Config file path')
     args = parser.parse_args()
 
-    playlist_editor = PlaylistEditor(args)
+    if args.e:
+        print(yaml.dump(yaml.load(EditorConfig.default_config)))
+        return
 
+    playlist_editor = PlaylistEditor(args)
     if args.a:
         playlist_editor.print_song_authors()
     elif args.l:

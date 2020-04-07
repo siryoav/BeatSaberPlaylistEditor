@@ -8,6 +8,8 @@ default_config = '''
 PreDefinedPlaylists: []
 PreDefinedSongAuthors: []
 SongAuthorMap: {}
+ForcedSongAuthor: {}
+ExcludedGuesses: {}
 '''
 
 
@@ -22,3 +24,6 @@ class EditorConfig(object, metaclass=Singleton):
     def save(self):
         with open(config_file_path, 'w') as f:
             yaml.dump(self.config, f)
+
+    def print(self):
+        yaml.dump(self.config)
