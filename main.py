@@ -13,6 +13,7 @@ def main():
     parser.add_argument('--song-name', action='store_true', help='Print song\'s name')
     parser.add_argument('--song-id', action='store_true', help='Print song\'s id')
     parser.add_argument('-p', action='store_true', help='Print new config file')
+    parser.add_argument('--cover-image', action='store_true', help='Create cover image for playlists')
     parser.add_argument('file', action='store', type=str, help='Config file path')
     args = parser.parse_args()
 

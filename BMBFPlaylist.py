@@ -1,3 +1,4 @@
+import ImageUtil
 from BMBFSongList import BMBFSongList
 
 
@@ -37,3 +38,6 @@ class BMBFPlaylist(object):
 
     def add_song(self, song):
         self.song_list.add_song(song)
+
+    def create_cover_image(self):
+        self.cover_image_bytes = ImageUtil.create_text_image_base64(self.name)

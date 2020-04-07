@@ -33,6 +33,6 @@ class BMBFConfigFile(object):
     def get_playlists(self):
         return self.config.get_playlists()
 
-    def get_new_playlists(self, new_pre_defined_playlists, new_playlists):
-        self.config.get_new_playlists(new_pre_defined_playlists, new_playlists)
+    def get_new_playlists(self, new_pre_defined_playlists, new_playlists, cover_image):
+        self.config.get_new_playlists(new_pre_defined_playlists, new_playlists, cover_image)
 

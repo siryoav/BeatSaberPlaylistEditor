@@ -77,7 +77,7 @@ class BMBFPlaylists(object):
                 in self.playlists
                 if playlist.id not in BMBFPlaylists.default_playlists]
 
-    def get_new_playlists(self, new_pre_defined_playlists, new_playlists):
+    def get_new_playlists(self, new_pre_defined_playlists, new_playlists, cover_image):
         playlists_res = BMBFPlaylists()
 
         # Insert default playlists
@@ -96,6 +96,8 @@ class BMBFPlaylists(object):
                 None,   # defaults I saw in real configurations
                 True,   # defaults I saw in real configurations
             )
+            if cover_image:
+                new_playlist.create_cover_image()
             playlists_res.add_playlist(new_playlist)
 
         # Insert rest of new playlists
@@ -111,6 +113,8 @@ class BMBFPlaylists(object):
                 None,   # defaults I saw in real configurations
                 True,   # defaults I saw in real configurations
             )
+            if cover_image:
+                new_playlist.create_cover_image()
             playlists_res.add_playlist(new_playlist)
 
         # Add songs from existing playlists with the same id as new playlists
@@ -165,6 +169,8 @@ class BMBFPlaylists(object):
                     None,   # defaults I saw in real configurations
                     True,   # defaults I saw in real configurations
                 )
+                if cover_image:
+                    new_custom_playlist.create_cover_image()
                 playlists_res.add_playlist(new_custom_playlist)
             else:
                 new_song_list = BMBFSongList()
