@@ -17,11 +17,17 @@ def main():
     parser.add_argument('--song-id', action='store_true', help='Print song\'s id')
     parser.add_argument('-p', action='store_true', help='Print new config file')
     parser.add_argument('--cover-image', action='store_true', help='Create cover image for playlists')
-    parser.add_argument('file', action='store', type=str, help='Config file path')
+    parser.add_argument('--all-playlists', action='store_true', help='Read from all playlists')
+    parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
+    parser.add_argument('playlist', nargs='?', action='store', type=str, help='Playlist name to read from', default=None)
     args = parser.parse_args()
 
     if args.e:
         print(yaml.dump(yaml.load(EditorConfig.default_config)))
+        return
+
+    if args.file is None:
+        parser.print_help()
         return
 
     playlist_editor = PlaylistEditor(args)

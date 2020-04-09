@@ -6,6 +6,7 @@ from collections import OrderedDict
 import yaml
 
 from BMBFConfigFile import BMBFConfigFile
+from BMBFPlaylists import BMBFPlaylists
 from EditorConfig import EditorConfig
 
 
@@ -17,6 +18,7 @@ def ordered_dump(data, stream=None, Dumper=yaml.Dumper, **kwds):
         return dumper.represent_mapping(
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             data.items())
+
     OrderedDumper.add_representer(OrderedDict, _dict_representer)
     return yaml.dump(data, stream, OrderedDumper, **kwds)
 
@@ -30,10 +32,10 @@ class PlaylistEditor(object):
                                          for value
                                          in EditorConfig().config['SongAuthorMap'][key]}
         self.normalized_reversed_song_author_map = {PlaylistEditor.normalize_song_author(value): key
-                                         for key
-                                         in EditorConfig().config['SongAuthorMap']
-                                         for value
-                                         in EditorConfig().config['SongAuthorMap'][key]}
+                                                    for key
+                                                    in EditorConfig().config['SongAuthorMap']
+                                                    for value
+                                                    in EditorConfig().config['SongAuthorMap'][key]}
 
         config_file_path = args.file
 
@@ -59,12 +61,25 @@ class PlaylistEditor(object):
 
     remove_non_alphabet = re.compile('[^a-zA-Z]')
 
+    def get_playlist_filter(self):
+        playlist_id = BMBFPlaylists.custom_playlist if not self.args.all_playlists else None
+        playlist_name = self.args.playlist
+        if playlist_id is None and playlist_name is None:  # All the lists (no touching the default ones)
+            return lambda playlist: playlist.id not in BMBFPlaylists.default_playlists
+        elif playlist_name is None:
+            return lambda playlist: playlist.id == playlist_id
+        else:
+            return lambda playlist: playlist.name == playlist_name
+
+    def get_song_authors(self):
+        return self.config_file.get_song_authors(self.get_playlist_filter())
+
     @staticmethod
     def normalize_song_author(song_author):
         return PlaylistEditor.remove_non_alphabet.sub('', song_author.lower())
 
     def print_song_authors(self):
-        song_authors_set = self.config_file.get_song_authors()
+        song_authors_set = self.get_song_authors()
 
         song_authors_set = set([
             self.transform_song_author(song_author)
@@ -112,7 +127,7 @@ class PlaylistEditor(object):
         return song_author_guesses
 
     def order_playlists(self):
-        song_authors_set = self.config_file.get_song_authors()
+        song_authors_set = self.get_song_authors()
 
         song_authors_dict = {
             song_author: self.transform_song_author(song_author)

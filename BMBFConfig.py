@@ -29,8 +29,8 @@ class BMBFConfig(object):
             'TextChanges': data.text_changes,
         }
 
-    def get_song_authors(self, playlist_id=BMBFPlaylists.custom_playlist):
-        return self.playlists.get_song_authors(playlist_id)
+    def get_song_authors(self, playlist_filter):
+        return self.playlists.get_song_authors(playlist_filter)
 
     def get_playlists(self):
         return self.playlists.get_playlists()

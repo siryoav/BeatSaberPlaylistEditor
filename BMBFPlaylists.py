@@ -12,7 +12,7 @@ class BMBFPlaylists(object):
         'Camellia',
     ]
     custom_playlist = 'CustomSongs'
-    
+
     def __init__(self):
         self.playlists = []
 
@@ -49,22 +49,15 @@ class BMBFPlaylists(object):
             return self.playlists[index]
         return None
 
-    def get_song_authors(self, playlist_id=custom_playlist):
+    def get_song_authors(self, playlist_filter):
         song_authors = set()
-        if playlist_id is None: # All the lists (no touching the default ones)
-            [song_authors.add(song_author)
-             for playlist
-             in self.playlists
-             for song_author
-             in playlist.get_song_authors()
-             if playlist.id not in BMBFPlaylists.default_playlists]
-        else:
-            [song_authors.add(song_author)
-             for playlist
-             in self.playlists
-             for song_author
-             in playlist.get_song_authors()
-             if playlist.id == playlist_id]
+        [
+            song_authors.add(song_author)
+            for playlist
+            in filter(playlist_filter, self.playlists)
+            for song_author
+            in playlist.get_song_authors()
+         ]
         [song_authors.add(song_author)
          for song_author
          in EditorConfig().config['PreDefinedSongAuthors']]
@@ -91,10 +84,10 @@ class BMBFPlaylists(object):
                 new_song_list.add_song(song)
             new_playlist = BMBFPlaylist(
                 playlist_id,
-                playlist_id,    # name is identical to id
+                playlist_id,  # name is identical to id
                 new_song_list,
-                None,   # defaults I saw in real configurations
-                True,   # defaults I saw in real configurations
+                None,  # defaults I saw in real configurations
+                True,  # defaults I saw in real configurations
             )
             if cover_image:
                 new_playlist.create_cover_image()
@@ -108,10 +101,10 @@ class BMBFPlaylists(object):
                 new_song_list.add_song(song)
             new_playlist = BMBFPlaylist(
                 playlist_id,
-                playlist_id,    # name is identical to id
+                playlist_id,  # name is identical to id
                 new_song_list,
-                None,   # defaults I saw in real configurations
-                True,   # defaults I saw in real configurations
+                None,  # defaults I saw in real configurations
+                True,  # defaults I saw in real configurations
             )
             if cover_image:
                 new_playlist.create_cover_image()
@@ -166,8 +159,8 @@ class BMBFPlaylists(object):
                     BMBFPlaylists.custom_playlist,
                     BMBFPlaylists.custom_playlist,
                     new_song_list,
-                    None,   # defaults I saw in real configurations
-                    True,   # defaults I saw in real configurations
+                    None,  # defaults I saw in real configurations
+                    True,  # defaults I saw in real configurations
                 )
                 playlists_res.add_playlist(new_custom_playlist)
             else:
