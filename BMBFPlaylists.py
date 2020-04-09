@@ -110,17 +110,7 @@ class BMBFPlaylists(object):
                 new_playlist.create_cover_image()
             playlists_res.add_playlist(new_playlist)
 
-        # Add songs from existing playlists with the same id as new playlists
-        for playlist in self.playlists:
-            if playlist.id in BMBFPlaylists.default_playlists:
-                continue
-            playlist_in_playlists_res = playlists_res.get_playlist(playlist.id)
-            if playlist_in_playlists_res is None:
-                continue
-            for song in playlist.get_song_list().get_songs():
-                playlist_in_playlists_res.add_song(song)
-
-        # Add songs from existing playlists that did not get into the new playlists
+        ###########################################
 
         song_ids_in_playlists_res = {
             song.id
@@ -130,6 +120,19 @@ class BMBFPlaylists(object):
             in playlist.get_song_list().get_songs()
         }
 
+        # Add songs from existing playlists with the same id as new playlists
+        for playlist in self.playlists:
+            if playlist.id in BMBFPlaylists.default_playlists:
+                continue
+            playlist_in_playlists_res = playlists_res.get_playlist(playlist.id)
+            if playlist_in_playlists_res is None:
+                continue
+            for song in playlist.get_song_list().get_songs():
+                if song.id in  song_ids_in_playlists_res:
+                    continue
+                playlist_in_playlists_res.add_song(song)
+
+        # Add songs from existing playlists that did not get into the new playlists
         for playlist in self.playlists:
             if playlist.id in BMBFPlaylists.default_playlists:
                 continue
