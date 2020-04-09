@@ -175,6 +175,8 @@ class PlaylistEditor(object):
                     self.add_safe_to_playlists(new_playlists, 'Unknown', song)
                     continue
                 self.add_safe_to_playlists(new_playlists, song_authors_dict[song.song_author_name], song)
+        if len(new_playlists['Unknown']) == 0:
+            del new_playlists['Unknown']
         return new_pre_defined_playlists, new_playlists
 
     def print_playlists(self):
