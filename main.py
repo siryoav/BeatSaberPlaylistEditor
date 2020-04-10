@@ -13,6 +13,7 @@ def main():
     parser.add_argument('-s', action='store_true', help='Strip whitespaces from author\'s name')
     parser.add_argument('-l', action='store_true', help='Print lists in yaml')
     parser.add_argument('-g', action='store_true', help='Try to guess song author if not available')
+    parser.add_argument('--fix-the', action='store_true', help='For song author that has 2 version, map all to version with "The"')
     parser.add_argument('--song-name', action='store_true', help='Print song\'s name')
     parser.add_argument('--song-id', action='store_true', help='Print song\'s id')
     parser.add_argument('-p', action='store_true', help='Print new config file')

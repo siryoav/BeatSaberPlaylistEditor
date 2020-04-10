@@ -81,11 +81,7 @@ class PlaylistEditor(object):
     def print_song_authors(self):
         song_authors_set = self.get_song_authors()
 
-        song_authors_set = set([
-            self.transform_song_author(song_author)
-            for song_author
-            in song_authors_set
-        ])
+        song_authors_set = set(self.transform_song_authors_set(song_authors_set).values())
 
         song_authors = sorted(list(song_authors_set))
         print('\n'.join(song_authors))
@@ -124,22 +120,44 @@ class PlaylistEditor(object):
             if normalized_song_author in PlaylistEditor.normalize_song_author(song.level_author_name):
                 song_author_guesses.add(song_author)
 
+        for song_author in song_author_guesses:
+            found = True
+            for other_song_author in song_author_guesses:
+                if PlaylistEditor.normalize_song_author(song_author) not in PlaylistEditor.normalize_song_author(other_song_author):
+                    found = False
+            if found:
+                song_author_guesses = {song_author}
+                break
         return song_author_guesses
 
-    def order_playlists(self):
-        song_authors_set = self.get_song_authors()
-
+    def transform_song_authors_set(self, song_authors_set):
         song_authors_dict = {
             song_author: self.transform_song_author(song_author)
             for song_author
             in song_authors_set
         }
+
+        if self.args.fix_the:
+            complete_song_authors_set = song_authors_set.union(set(EditorConfig().config['PreDefinedSongAuthors'])).\
+                union(set(EditorConfig().config['ForcedSongAuthor'].values()))
+            for song_author in complete_song_authors_set:
+                if "the " in song_author[:4] or "The " in song_author[:4]:
+                    song_authors_dict[song_author[4:]] = song_author
+
+        return song_authors_dict
+
+    def order_playlists(self):
+        song_authors_set = self.get_song_authors()
+
+        song_authors_dict = self.transform_song_authors_set(song_authors_set)
+
         normalized_song_authors = {
             song_author: PlaylistEditor.normalize_song_author(song_author)
             for song_author
             in set(song_authors_dict.values())
             if len(PlaylistEditor.normalize_song_author(song_author)) >= 3
         }
+
         new_playlists = {
             'Unknown': [],
         }
