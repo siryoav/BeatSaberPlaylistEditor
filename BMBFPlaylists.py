@@ -1,3 +1,6 @@
+import hashlib
+import json
+
 from BMBFPlaylist import BMBFPlaylist
 from BMBFSongList import BMBFSongList
 from EditorConfig import EditorConfig
@@ -12,6 +15,8 @@ class BMBFPlaylists(object):
         'Camellia',
     ]
     custom_playlist = 'CustomSongs'
+
+    id_separator = '#@#'
 
     def __init__(self):
         self.playlists = []
@@ -72,6 +77,10 @@ class BMBFPlaylists(object):
 
     def get_new_playlists(self, new_pre_defined_playlists, new_playlists, cover_image):
         playlists_res = BMBFPlaylists()
+        sha1 = hashlib.sha1()
+        sha1.update(json.dumps(new_pre_defined_playlists, default=lambda o: o.__dict__).encode())
+        sha1.update(json.dumps(new_playlists, default=lambda o: o.__dict__).encode())
+        postfix = BMBFPlaylists.id_separator + sha1.hexdigest()
 
         # Insert default playlists
         for playlist_id in BMBFPlaylists.default_playlists:
@@ -83,8 +92,8 @@ class BMBFPlaylists(object):
             for song in songs:
                 new_song_list.add_song(song)
             new_playlist = BMBFPlaylist(
+                playlist_id + postfix,  # explanation about postfix in README
                 playlist_id,
-                playlist_id,  # name is identical to id
                 new_song_list,
                 None,  # defaults I saw in real configurations
                 True,  # defaults I saw in real configurations
@@ -100,8 +109,8 @@ class BMBFPlaylists(object):
             for song in songs:
                 new_song_list.add_song(song)
             new_playlist = BMBFPlaylist(
+                playlist_id + postfix,   # explanation about postfix in README
                 playlist_id,
-                playlist_id,  # name is identical to id
                 new_song_list,
                 None,  # defaults I saw in real configurations
                 True,  # defaults I saw in real configurations
@@ -124,11 +133,14 @@ class BMBFPlaylists(object):
         for playlist in self.playlists:
             if playlist.id in BMBFPlaylists.default_playlists:
                 continue
-            playlist_in_playlists_res = playlists_res.get_playlist(playlist.id)
+            playlist_id = playlist.id
+            if BMBFPlaylists.id_separator in playlist_id:
+                playlist_id = playlist_id.split(BMBFPlaylists.id_separator)[0]
+            playlist_in_playlists_res = playlists_res.get_playlist(playlist_id + postfix)
             if playlist_in_playlists_res is None:
                 continue
             for song in playlist.get_song_list().get_songs():
-                if song.id in  song_ids_in_playlists_res:
+                if song.id in song_ids_in_playlists_res:
                     continue
                 playlist_in_playlists_res.add_song(song)
 
@@ -144,8 +156,11 @@ class BMBFPlaylists(object):
                 new_song_list = BMBFSongList()
                 for song in remaining_songs:
                     new_song_list.add_song(song)
+                playlist_id = playlist.id
+                if BMBFPlaylists.id_separator in playlist_id:
+                    playlist_id = playlist_id.split(BMBFPlaylists.id_separator)[0]
                 new_playlist = BMBFPlaylist(
-                    playlist.id,
+                    playlist_id + postfix,
                     playlist.name,
                     new_song_list,
                     playlist.cover_image_bytes,
