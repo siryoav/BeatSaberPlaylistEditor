@@ -1,6 +1,7 @@
 import bisect
 import json
 import re
+import string
 from collections import OrderedDict
 
 import yaml
@@ -137,14 +138,26 @@ class PlaylistEditor(object):
             in song_authors_set
         }
 
-        if self.args.fix_the:
+        if self.args.fix_the or self.args.r:
             complete_song_authors_set = song_authors_set.union(set(EditorConfig().config['PreDefinedSongAuthors'])).\
                 union(set(EditorConfig().config['ForcedSongAuthor'].values()))
             for song_author in complete_song_authors_set:
-                if "the " in song_author[:4] or "The " in song_author[:4]:
-                    song_authors_dict[song_author[4:]] = song_author
+                if self.args.fix_the:
+                    if "the " in song_author[:4] or "The " in song_author[:4]:
+                        song_authors_dict[song_author[4:]] = song_author
+                if self.args.r:
+                    if song_author.isupper() and string.capwords(song_author) in complete_song_authors_set:
+                        song_authors_dict[song_author] = string.capwords(song_author)
 
         return song_authors_dict
+
+    @staticmethod
+    def resolve(song_author, song_authors_dict):
+        i = 10  # limit search to avoid cycles
+        while song_author in song_authors_dict and i > 0:
+            song_author = song_authors_dict[song_author]
+            i -= 1
+        return song_author
 
     def order_playlists(self):
         song_authors_set = self.get_song_authors()
@@ -177,12 +190,20 @@ class PlaylistEditor(object):
                 if found:
                     continue
                 if song.id in EditorConfig().config['ForcedSongAuthor']:
-                    self.add_safe_to_playlists(new_playlists, EditorConfig().config['ForcedSongAuthor'][song.id], song)
+                    self.add_safe_to_playlists(
+                        new_playlists,
+                        PlaylistEditor.resolve(EditorConfig().config['ForcedSongAuthor'][song.id], song_authors_dict),
+                        song,
+                    )
                     continue
                 if self.args.g:
                     song_author_guesses = self.song_author_guesser(song, normalized_song_authors)
                     if len(song_author_guesses) == 1:
-                        self.add_safe_to_playlists(new_playlists, song_author_guesses.pop(), song)
+                        self.add_safe_to_playlists(
+                            new_playlists,
+                            PlaylistEditor.resolve(song_author_guesses.pop(), song_authors_dict),
+                            song,
+                        )
                         continue
                 if song.song_author_name not in song_authors_dict:
                     if self.args.g:
@@ -192,7 +213,11 @@ class PlaylistEditor(object):
                             continue
                     self.add_safe_to_playlists(new_playlists, 'Unknown', song)
                     continue
-                self.add_safe_to_playlists(new_playlists, song_authors_dict[song.song_author_name], song)
+                self.add_safe_to_playlists(
+                    new_playlists,
+                    PlaylistEditor.resolve(song_authors_dict[song.song_author_name], song_authors_dict),
+                    song,
+                )
         if len(new_playlists['Unknown']) == 0:
             del new_playlists['Unknown']
         return new_pre_defined_playlists, new_playlists
