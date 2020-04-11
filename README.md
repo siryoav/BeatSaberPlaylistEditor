@@ -18,28 +18,34 @@ This project is based on the ability to backup and restore BMBF config, using [P
 Use `PlayList Editor Pro` to backup BMBF config file
 ### Editor configurations
 You should create a new editor config file.
-* Use `python main.py -e config.json > config.yaml`
+* Use `python main.py -e > config.yaml`
 
 The application will read the configurations file from `config.yaml`
 ### Good to know
 * This application will not touch any of the default BeatSaber playlists (OST1, OST2, etc.)
-* It will try to organize only songs in the custom song list (for now, with a little change it will be more dynamic)
 ### Print song authors
 To enable you to know where you stand you can print the list of song authors
 Use `python main.py -a config.json`
-
+#### Input playlist
+The default input playlist is the custom songs playlist.
+* Use `--all-playlists` to use all playlists (except default ones) as inputs
+* Use the second positional argument (after input file) to give the name of the input playlist
+    * For example `python main.py -a config.json my_playlist`
 #### Basic changes
 * Add `-c` to capitalize first letter in word
 * Add `-s` to strip whitespaces from author's name
-
+* Add `-r` to transform all capital letters to only first capital if possible - In case there are two song authors - one with the name in all capital  and one not (first letter capital or all not capital) - transfrom the all capital version to the other version - for example - `MUSE` will be transformed to `Muse` (given that some other song has the author `Muse`)
+* Add `--fix-the` to add authors a missing "The". Depends on that some other song has the author with "The" - for example `Offspring` will be transformed into `The Offspring` (given that some other song has the author `The Offspring`)
 ### Print new playlists in yaml
 To enable easy editing, and editor config editing - you can print the resulting playlists in `yaml`.
 
 Use `python main.py -l --song-name config.json > playlists.yaml`
 
 This will create playlists using author's name and will add to the playlists songs that have a matching author's name.
+#### Input playlist
+* Same as before - `--all-playlists` and the second positional argument are still available
 #### Basic changes
-* `-s` and `-c` are still available
+* `-s`, `-c`, `-r` and `--fix-the` are still available
 * You should add `--song-name` or `--song-id`
     * Without them you would get the python str of internal object
     * With both you will get also song level author, and all of this will be printed in a very convenient format to help you change editor config
@@ -63,22 +69,39 @@ The guessing algorithm normalizes all known authors (from: author field, pre-def
 ### Print new BMBF config
 To get the resulting config file
 Use `python main.py -p config.json > new_config.json`
+#### Input playlist
+* Same as before - `--all-playlists` and the second positional argument are still available
 #### Basic changes
-* `-s`, `-c` and `-g` are still available
+* `-s`, `-c`, `-r`, `-g` and `--fix-the` are still available
 * *Do not* use `--song-name` or `--song-id`
 * `--cover-image` - Creates a cover image for the new playlists that contains a text with the playlist's name. Very useful for navigating between a lot of playlists
 
 ## You should know
 * There are almost no checks for flag combinations - so this is your responsibility.
-* Backup and restore:
-    * BMBF should be open.
-    * Use The backup button in `PlayList Editor Pro` to save you current config to the computer.
-    * Use the backup file to utilize as input to this application.
-    * Close `PlayList Editor Pro`
-    * Replace the file that you used with your new config
-    * Open `PlayList Editor Pro`
-    * Select the config file
-    * Click the restore button.
-    * Be aware that you should wait for BMBF to finish processing the new config, sometimes I had to wait for the "Sync BeatSaber" red button to show up and let it finish.
+### Backup and restore
+* BMBF should be open.
+* Use The backup button in `PlayList Editor Pro` to save you current config to the computer.
+* Use the backup file to utilize as input to this application.
+* Close `PlayList Editor Pro`
+* Replace the file that you used with your new config
+* Open `PlayList Editor Pro`
+* Select the config file
+* Click the restore button.
+* Be aware that you should wait for BMBF to finish processing the new config, sometimes I had to wait for the "Sync BeatSaber" red button to show up and let it finish.
     * Also, many times I had `PlayList Editor Pro` throw an error (connection timeout for example) - just click continue.
-* Example editor [config.yaml.txt](https://github.com/siryoav/BeatSaberPlaylistEditor/files/4446111/config.yaml.txt)
+### Example editor config
+* Example editor [config.yaml.txt](https://github.com/siryoav/BeatSaberPlaylistEditor/files/4464453/config.yam.txt)
+### Recomannded workflow
+* `python main.py -l -c -s -g -r --song-name --all-playlists --fix-the config.json > playlists.yaml`
+* `python main.py -l -c -s -g -r --song-name --song-id --all-playlists --fix-the config.json > playlists.yaml`
+* `python main.py -p -c -s -g -r --all-playlists --fix-the --cover-image config.json > new_config.json`
+
+## FAQ
+### Postfix SHA1 for playlists
+Because the restore process of config.json is out of my hands, I found this to be a simple and reliable solution to the problem:
+* The restore process does not respect the order of the playlists in the restored config.json. It will create new playlists in the correct order, but will add them at the end of the playlists list - meaning that every existing playlist will be before the newly added lists.
+* As a result - upon using this tool for the second time and on - if you added songs from an author you didn't have before - this author will not be ordered alphabetically as the rest, but will be put in the end of playlists list.
+* The recognition of existing playlists is done by a field in the playlist called `id`.
+* To Solve the problem I added a SHA1 digest to the end of each playlist id, causing all the previous playlists to be deleted (because the same IDs are not existing in the new config.json) and the new ones to be created in the correct order
+    * The use of SHA1 is a standard way to avoid collisions.
+    * The hash is done on the resulting playlists - because I wanted this application to be deterministic.
