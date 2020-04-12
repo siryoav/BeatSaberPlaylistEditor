@@ -231,3 +231,14 @@ class PlaylistEditor(object):
         new_pre_defined_playlists, new_playlists = self.order_playlists()
         self.config_file.get_new_playlists(new_pre_defined_playlists, new_playlists, self.args.cover_image)
         print(json.dumps(BMBFConfigFile.dump(self.config_file), indent=4))
+
+    def print_count(self):
+        new_pre_defined_playlists, new_playlists = self.order_playlists()
+        playlist_count = len(new_pre_defined_playlists) + len(new_playlists)
+        song_count = sum([
+            len(songs)
+            for songs
+            in list(new_pre_defined_playlists.values()) + list(new_playlists.values())
+        ])
+        print('Playlists: {}'.format(playlist_count))
+        print('Songs: {}'.format(song_count))

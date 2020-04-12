@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--song-name', action='store_true', help='Print song\'s name')
     parser.add_argument('--song-id', action='store_true', help='Print song\'s id')
     parser.add_argument('-p', action='store_true', help='Print new config file')
+    parser.add_argument('--count', action='store_true', help='Print number of playlists and number of songs')
     parser.add_argument('--cover-image', action='store_true', help='Create cover image for playlists')
     parser.add_argument('--all-playlists', action='store_true', help='Read from all playlists')
     parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
@@ -39,6 +40,8 @@ def main():
         playlist_editor.print_playlists()
     elif args.p:
         playlist_editor.print_new_config_file()
+    elif args.count:
+        playlist_editor.print_count()
     else:
         parser.print_help()
 
