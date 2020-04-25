@@ -5,6 +5,16 @@ import EditorConfig
 from PlaylistEditor import PlaylistEditor
 
 
+def print_trash_script():
+    print('@ECHO OFF')
+    print('FOR %%f IN (')
+    for f in EditorConfig.EditorConfig().config['Trash']:
+        print('\t{}.zip'.format(f[13:]))
+    print(') DO (')
+    print('\tDEL /F /Q %%f')
+    print(')')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', action='store_true', help='Print editor default config')
@@ -21,12 +31,17 @@ def main():
     parser.add_argument('--count', action='store_true', help='Print number of playlists and number of songs')
     parser.add_argument('--cover-image', action='store_true', help='Create cover image for playlists')
     parser.add_argument('--all-playlists', action='store_true', help='Read from all playlists')
+    parser.add_argument('-t', action='store_true', help='Print trash script')
     parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
     parser.add_argument('playlist', nargs='?', action='store', type=str, help='Playlist name to read from', default=None)
     args = parser.parse_args()
 
     if args.e:
         print(yaml.dump(yaml.load(EditorConfig.default_config)))
+        return
+    
+    if args.t:
+        print_trash_script()
         return
 
     if args.file is None:

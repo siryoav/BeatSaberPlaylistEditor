@@ -1,4 +1,5 @@
 from BMBFSong import BMBFSong
+from EditorConfig import EditorConfig
 
 
 class BMBFSongList(object):
@@ -7,7 +8,7 @@ class BMBFSongList(object):
         self.song_ids = set()
 
     def add_song(self, song):
-        if song.id not in self.song_ids:
+        if song.id not in self.song_ids and song.id not in EditorConfig().config['Trash']:
             self.song_ids.add(song.id)
             self.songs.append(song)
 

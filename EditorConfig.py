@@ -10,6 +10,7 @@ PreDefinedSongAuthors: []
 SongAuthorMap: {}
 ForcedSongAuthor: {}
 ExcludedGuesses: {}
+Trash: []
 '''
 
 
