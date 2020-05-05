@@ -36,6 +36,9 @@ class BMBFPlaylist(object):
     def get_song_list(self):
         return self.song_list
 
+    def get_songs(self):
+        return self.song_list.get_songs()
+
     def add_song(self, song):
         self.song_list.add_song(song)
 

@@ -48,6 +48,8 @@ def main():
         playlist_editor.print_new_config_file()
     elif args.count:
         playlist_editor.print_count()
+    elif args.auto_trash:
+        playlist_editor.auto_get_bookmarked_to_trash()
     else:
         parser.print_help()
 

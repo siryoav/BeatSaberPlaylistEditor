@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 import yaml
 
+from ADBClient import ADBClient
 from BMBFConfigFile import BMBFConfigFile
 from BMBFPlaylists import BMBFPlaylists
 from EditorConfig import EditorConfig
@@ -242,3 +243,46 @@ class PlaylistEditor(object):
         ])
         print('Playlists: {}'.format(playlist_count))
         print('Songs: {}'.format(song_count))
+
+    def get_songs(self):
+        return self.config_file.get_songs(self.get_playlist_filter())\
+
+    def auto_get_bookmarked_to_trash(self):
+        if self.args.auto_trash_source is not None:
+            with open(self.args.auto_trash_source) as f:
+                player_data = json.load(f)
+        else:
+            adb = ADBClient()
+            player_data = adb.get_player_data()
+
+        favorites_level_ids = set(player_data['localPlayers'][0]['favoritesLevelIds'])
+
+        songs = self.get_songs()
+        songs_dict = {
+            song.id: song
+            for song
+            in songs
+        }
+        songs_ids = set(songs_dict.keys())
+
+        trash_config = EditorConfig().config['Trash']
+        if self.args.favorite_whitelist:
+            new_trash = songs_ids - favorites_level_ids
+        else:
+            new_trash = favorites_level_ids
+        if self.args.trash_overwrite:
+            trash_config.clear()
+            final_trash = new_trash
+        else:
+            old_trash = set(trash_config)
+            final_trash = new_trash - old_trash
+
+        for song_id in final_trash:
+            trash_config.append(song_id)
+            if song_id in songs_dict:
+                trash_config.yaml_add_eol_comment(songs_dict[song_id].name, len(trash_config) - 1)
+
+        EditorConfig().print()
+
+        # print(json.dumps(adb.getCustomSongsDirContent(), indent=4))
+

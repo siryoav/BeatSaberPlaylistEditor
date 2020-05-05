@@ -37,3 +37,6 @@ class BMBFConfig(object):
 
     def get_new_playlists(self, new_pre_defined_playlists, new_playlists, cover_image):
         self.playlists = self.playlists.get_new_playlists(new_pre_defined_playlists, new_playlists, cover_image)
+
+    def get_songs(self, playlist_filter):
+        return self.playlists.get_songs(playlist_filter)

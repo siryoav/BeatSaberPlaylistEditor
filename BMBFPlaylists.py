@@ -193,3 +193,14 @@ class BMBFPlaylists(object):
                 playlists_res.add_playlist(new_custom_playlist)
 
         return playlists_res
+
+    def get_songs(self, playlist_filter):
+        songs = set()
+        [
+            songs.add(song)
+            for playlist
+            in filter(playlist_filter, self.playlists)
+            for song
+            in playlist.get_songs()
+         ]
+        return songs

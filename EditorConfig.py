@@ -1,5 +1,6 @@
 import os
-import yaml
+import sys
+import ruamel.yaml
 
 from Singleton import Singleton
 
@@ -13,6 +14,7 @@ ExcludedGuesses: {}
 Trash: []
 '''
 
+yaml = ruamel.yaml.YAML()
 
 class EditorConfig(object, metaclass=Singleton):
     def __init__(self):
@@ -27,4 +29,4 @@ class EditorConfig(object, metaclass=Singleton):
             yaml.dump(self.config, f)
 
     def print(self):
-        yaml.dump(self.config)
+        yaml.dump(self.config, sys.stdout)
