@@ -1,9 +1,26 @@
 import argparse
+import functools
 
 import yaml
 
 import EditorConfig
+from ADBClient import ADBClient
 from PlaylistEditor import PlaylistEditor
+
+
+def trash_path_filter(trash_ids, song_path):
+    for trash_id in trash_ids:
+        if trash_id in song_path:
+            return True
+    return False
+
+
+def empty_trash_from_device():
+    trash_ids = set(map(lambda f: f[13:], EditorConfig.EditorConfig().config['Trash']))
+    adb_client = ADBClient()
+    existing_songs_paths = adb_client.get_custom_songs_dir_content()
+    songs_paths_to_delete = filter(functools.partial(trash_path_filter, trash_ids), existing_songs_paths)
+    adb_client.delete_songs(list(songs_paths_to_delete))
 
 
 def main():
@@ -26,6 +43,7 @@ def main():
     parser.add_argument('--auto-trash-source', action='store', type=str, help='File path to get favorites from', default=None)
     parser.add_argument('--trash-overwrite', action='store_true', help='Auto add items to your trash using ADB')
     parser.add_argument('--favorite-whitelist', action='store_true', help='Auto add items to your trash using ADB')
+    parser.add_argument('--empty-trash-from-device', action='store_true', help='Using ADB, delete all trash songs')
     parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
     parser.add_argument('playlist', nargs='?', action='store', type=str, help='Playlist name to read from',
                         default=None)
@@ -33,6 +51,10 @@ def main():
 
     if args.e:
         print(yaml.dump(yaml.load(EditorConfig.default_config)))
+        return
+
+    if args.empty_trash_from_device:
+        empty_trash_from_device()
         return
 
     if args.file is None:

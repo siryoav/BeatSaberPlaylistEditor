@@ -16,6 +16,7 @@ Trash: []
 
 yaml = ruamel.yaml.YAML()
 
+
 class EditorConfig(object, metaclass=Singleton):
     def __init__(self):
         if os.path.exists(config_file_path):

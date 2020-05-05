@@ -284,5 +284,3 @@ class PlaylistEditor(object):
 
         EditorConfig().print()
 
-        # print(json.dumps(adb.getCustomSongsDirContent(), indent=4))
-
