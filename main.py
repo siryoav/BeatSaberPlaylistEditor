@@ -1,62 +1,9 @@
 import argparse
+
 import yaml
 
 import EditorConfig
 from PlaylistEditor import PlaylistEditor
-
-trash_script = """@ECHO OFF
-setlocal
-for /f "usebackq delims=" %%t in (`powershell -noprofile -c "[Console]::Title.Replace(' - '+[Environment]::CommandLine,'') -replace '(.+) - .+','$1'"`) do set thisTitle=%%t
-setlocal EnableDelayedExpansion
-set n=0
-
-set count=0
-for /D %%j in (*) do set /A count+=1
-
-rem Fill "bar" variable with 70 characters
-set "bar="
-for /L %%j in (1,1,70) do set "bar=!bar!#"
-
-rem Fill "space" variable with filler spaces
-set "space="
-for /L %%i in (1,1,98) do set "space=!space!_"
-set k=0
-
-FOR /D %%i IN (*) DO (
-
-	set /A k+=1, percent=k*100/count, barLen=70*percent/100
-	set /A spaceLen=100-percent
-	set /A spaceLen=98*spaceLen/100
-	for %%a in (!barLen!) do set completed=!bar:~0,%%a!
-	for %%a in (!spaceLen!) do set not_completed=!space:~0,%%a!
-	title !percent!%% !completed!!not_completed!
-
-	FOR %%f IN (
-{}
-	) DO (
-		ECHO %%i | FINDSTR /C:"%%f" >nul & IF ERRORLEVEL 1 (
-			REM FALSE
-		) else (
-			set vector[!n!]=%%i
-			set /A n+=1
-		)
-	)
-)
-
-
-set /A n-=1
-for /L %%i in (0,1,%n%) do (
-	set j=!vector[%%i]!
-	echo !j!
-	RMDIR /s /Q "!j!"
-)
-title !thisTitle!
-"""
-
-
-def print_trash_script():
-    print(trash_script.format(
-        '\n'.join(map(lambda f: '\t\t{}'.format(f[13:]), EditorConfig.EditorConfig().config['Trash']))))
 
 
 def main():
@@ -75,7 +22,6 @@ def main():
     parser.add_argument('--count', action='store_true', help='Print number of playlists and number of songs')
     parser.add_argument('--cover-image', action='store_true', help='Create cover image for playlists')
     parser.add_argument('--all-playlists', action='store_true', help='Read from all playlists')
-    parser.add_argument('-t', action='store_true', help='Print trash script')
     parser.add_argument('--auto-trash', action='store_true', help='Auto add items to your trash using ADB')
     parser.add_argument('--auto-trash-source', action='store', type=str, help='File path to get favorites from', default=None)
     parser.add_argument('--trash-overwrite', action='store_true', help='Auto add items to your trash using ADB')
@@ -87,10 +33,6 @@ def main():
 
     if args.e:
         print(yaml.dump(yaml.load(EditorConfig.default_config)))
-        return
-
-    if args.t:
-        print_trash_script()
         return
 
     if args.file is None:
