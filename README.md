@@ -90,6 +90,7 @@ The application will not write the songs in the trash to playlists, no matter wh
     * You can copy relevant data from you Oculus Quest by your self, and this makes ADB unnecessary - more on this later.
 * You should backup you config.yaml
 * After filling your Trash - you should [Print new BMBF config](https://github.com/siryoav/BeatSaberPlaylistEditor#print-new-bmbf-config)
+* Auto trash will also clean your configuration from previous usages of songs in the trash (for example - if you added it to a pre-defined list - it will remove it from there).
 Use `python main.py --auto-trash config.json > config.yaml`
 #### Input playlist
 * Same as before - `--all-playlists` and the second positional argument are still available
