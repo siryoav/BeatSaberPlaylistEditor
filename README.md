@@ -11,8 +11,12 @@ This project is based on the ability to backup and restore BMBF config, using [P
 * BMBF config file - A `json` file containing BMBF configuration - can be obtained using `PlayList Editor Pro`. This guide will assume you have this file in the same folder with the application with the name `config.json`
 * `PlayList Editor Pro` - a project that enables offline playlist editing for BMBF [PlayList Editor Pro](http://beatsaberquest.com/playlisteditorpro/)
 * Python 3
-* `pillow` python library - `pip install pillow`
 * BeatSaber 1.8 (because this is the only version I tested with)
+### Trash management
+For some of the features related to trash management (songs you don't want to have on your device anymore)
+* ADB installed on the computer and in the `PATH` environment variable
+## Installation
+`pip install -r requirements.txt`
 ## Getting started
 ### Get the BMBF config file
 Use `PlayList Editor Pro` to backup BMBF config file
@@ -75,7 +79,32 @@ Use `python main.py -p config.json > new_config.json`
 * `-s`, `-c`, `-r`, `-g` and `--fix-the` are still available
 * *Do not* use `--song-name` or `--song-id`
 * `--cover-image` - Creates a cover image for the new playlists that contains a text with the playlist's name. Very useful for navigating between a lot of playlists
+### Print counts of playlists and songs
+`python main.py --count config.json`
+### Trash
+Trash configuration is where you can define song IDs that should be deleted from your playlists.
 
+The application will not write the songs in the trash to playlists, no matter what (even if they are written elsewere in the configurations)
+### Auto fill your trash
+* You will need ADB installed on the computer. see [Prerequisites](https://github.com/siryoav/BeatSaberPlaylistEditor#trash-management)
+    * You can copy relevant data from you Oculus Quest by your self, and this makes ADB unnecessary - more on this later.
+* You should backup you config.yaml
+* After filling your Trash - you should [Print new BMBF config](https://github.com/siryoav/BeatSaberPlaylistEditor#print-new-bmbf-config)
+Use `python main.py --auto-trash config.json > config.yaml`
+#### Input playlist
+* Same as before - `--all-playlists` and the second positional argument are still available
+#### Basic changes
+* `--auto-trash-source` - replaces the need for ADB - you can supply your own `PlayerData.dat`
+    * On the Oculus Quest - the `PlayerData.dat` is located at: `/sdcard/Android/data/com.beatgames.beatsaber/files/PlayerData.dat`
+    * For example, if `PlayerData.dat` is in the current directory, `--auto-trash-source=PlayerData.dat`
+* `--trash-overwrite` - Causes the new trash data to overwrite the old trash data, otherwise it appends.
+* `--favorite-whitelist` - Causes the favorites list to be considered as whitelist - meaning all the songs *not* in the favorites list will go to trash
+### Empty trash from Oculus Quest memory
+Use Trash configuration and ADB to delete the songs in trash from the Oculus Quests' memory.
+* You will need ADB installed on the computer. see [Prerequisites](https://github.com/siryoav/BeatSaberPlaylistEditor#trash-management)
+* This *Cannot be reverted*
+* I recommend doing 
+Use `python main.py --empty-trash-from-device`
 ## You should know
 * There are almost no checks for flag combinations - so this is your responsibility.
 ### Backup and restore
