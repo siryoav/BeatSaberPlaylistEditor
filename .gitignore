@@ -1,6 +1,9 @@
 /res.txt
 /config.json
-/config.yaml
+/config.yaml*
 __pycache__/
-/playlists.yaml
-/new_config.json
+/playlists*.yaml
+/new_config*.json
+/config*.json
+/PlayerData.dat.json
+/images/
