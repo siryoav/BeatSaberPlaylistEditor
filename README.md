@@ -91,6 +91,7 @@ The application will not write the songs in the trash to playlists, no matter wh
 * You should backup you config.yaml
 * After filling your Trash - you should [Print new BMBF config](https://github.com/siryoav/BeatSaberPlaylistEditor#print-new-bmbf-config)
 * Auto trash will also clean your configuration from previous usages of songs in the trash (for example - if you added it to a pre-defined list - it will remove it from there).
+* Auto trash is dependent on the favorites list you can manipulate from *inside* BeatSaber
 Use `python main.py --auto-trash config.json > config.yaml`
 #### Input playlist
 * Same as before - `--all-playlists` and the second positional argument are still available
@@ -104,7 +105,7 @@ Use `python main.py --auto-trash config.json > config.yaml`
 Use Trash configuration and ADB to delete the songs in trash from the Oculus Quests' memory.
 * You will need ADB installed on the computer. see [Prerequisites](https://github.com/siryoav/BeatSaberPlaylistEditor#trash-management)
 * This *Cannot be reverted*
-* I recommend doing 
+* I recommend doing this only after you restored to BMBF the new config without the trash - I don't know what happens if BeatSaber has a song in the playlists but cannot find it's data on the memory. If you try it - please let me know what happened.
 Use `python main.py --empty-trash-from-device`
 ## You should know
 * There are almost no checks for flag combinations - so this is your responsibility.
@@ -121,11 +122,29 @@ Use `python main.py --empty-trash-from-device`
     * Also, many times I had `PlayList Editor Pro` throw an error (connection timeout for example) - just click continue.
 ### Example editor config
 * Example editor [config.yaml.txt](https://github.com/siryoav/BeatSaberPlaylistEditor/files/4464453/config.yam.txt)
-### Recomannded workflow
+### Recommended workflow
+#### Adding songs
+* Use [Sublime](https://www.sublimetext.com/) to view your current version of `playlists.yaml` and update it with the application while reading through it.
 * `python main.py -l -c -s -g -r --song-name --all-playlists --fix-the config.json > playlists.yaml`
+    * Use this command to easily find incorrect song authors that are similar to the correct ones - and add to `SongAuthorMap` configuration
+    * It is recommended to add to `SongAuthorMap` only cases where the song author is close to the correct one and not where it is not related to the real song author
+        * For example - `Taylor Swift: [T Swift]` is a good example because `T Swift` is a shortcut for `Taylor Swift`.
 * `python main.py -l -c -s -g -r --song-name --song-id --all-playlists --fix-the config.json > playlists.yaml`
+    * Use this command to easily find incorrect song authors that has no similarty to the correct ones - and add to `ForcedSongAuthor`.
+        * Usually happend when the song author name field is filled with the map author name or the song name instead.
+    * Also very useful to add to `PreDefinedPlaylists`
 * `python main.py -p -c -s -g -r --all-playlists --fix-the --cover-image config.json > new_config.json`
-
+    * Creating the final config.json to be restored
+* Restore using `new_config.json`
+#### Deleting songs (Trash)
+* Connect Oculus Quest to PC
+* `python main.py --auto-trash --all-playlists config.json > config.yaml`
+    * This will create a new configuration file with updated Trash
+* `python main.py -p -c -s -g -r --all-playlists --fix-the --cover-image config.json > new_config.json`
+    * Creating the updated with no trash `config.json` to be restored
+* Restore using `new_config.json`
+* `python main.py --empty-trash-from-device`
+    *  Deleting from the Oculus Quest the trashed data
 ## FAQ
 ### Postfix SHA1 for playlists
 Because the restore process of config.json is out of my hands, I found this to be a simple and reliable solution to the problem:
