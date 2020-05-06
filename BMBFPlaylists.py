@@ -66,7 +66,8 @@ class BMBFPlaylists(object):
         [song_authors.add(song_author)
          for song_author
          in EditorConfig().config['PreDefinedSongAuthors']]
-        song_authors.remove('')
+        if '' in song_authors:
+            song_authors.remove('')
         return song_authors
 
     def get_playlists(self):

@@ -66,6 +66,8 @@ class PlaylistEditor(object):
     def get_playlist_filter(self):
         playlist_id = BMBFPlaylists.custom_playlist if not self.args.all_playlists else None
         playlist_name = self.args.playlist
+        if self.args.disable_auto_sort:
+            return lambda playlist: False
         if playlist_id is None and playlist_name is None:  # All the lists (no touching the default ones)
             return lambda playlist: playlist.id not in BMBFPlaylists.default_playlists
         elif playlist_name is None:
@@ -161,6 +163,8 @@ class PlaylistEditor(object):
         return song_author
 
     def order_playlists(self):
+        if self.args.disable_auto_sort:
+            return {}, {}
         song_authors_set = self.get_song_authors()
 
         song_authors_dict = self.transform_song_authors_set(song_authors_set)

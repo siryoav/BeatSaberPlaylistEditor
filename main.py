@@ -45,6 +45,7 @@ def main():
     parser.add_argument('--trash-overwrite', action='store_true', help='Auto add items to your trash using ADB')
     parser.add_argument('--favorite-whitelist', action='store_true', help='Auto add items to your trash using ADB')
     parser.add_argument('--empty-trash-from-device', action='store_true', help='Using ADB, delete all trash songs')
+    parser.add_argument('--disable-auto-sort', action='store_true', help='Disable the auto sorting function')
     parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
     parser.add_argument('playlist', nargs='?', action='store', type=str, help='Playlist name to read from',
                         default=None)
