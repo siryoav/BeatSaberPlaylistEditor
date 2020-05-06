@@ -1,3 +1,4 @@
+from _version import __version__
 import argparse
 import functools
 
@@ -47,7 +48,12 @@ def main():
     parser.add_argument('file', nargs='?', action='store', type=str, help='Config file path', default=None)
     parser.add_argument('playlist', nargs='?', action='store', type=str, help='Playlist name to read from',
                         default=None)
+    parser.add_argument('-v', action='store_true', help='Print version')
     args = parser.parse_args()
+
+    if args.v:
+        print(__version__)
+        return
 
     if args.e:
         print(yaml.dump(yaml.load(EditorConfig.default_config)))
