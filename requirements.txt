@@ -1,5 +1,5 @@
 Pillow==7.1.1
 pure-python-adb==0.2.3.dev0
-PyYAML==3.13
+PyYAML==5.1
 ruamel.yaml==0.16.10
 ruamel.yaml.clib==0.2.0
