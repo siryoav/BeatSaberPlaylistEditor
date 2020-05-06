@@ -31,9 +31,15 @@ class ADBClient(object):
                         self.device.shell('ls -m {}'.format(custom_songs_path)).split(',')))
 
     def delete_songs(self, songs_paths):
+        print('Number of songs to delete: {}'.format(len(songs_paths)))
         full_path_songs = list(map(lambda song_path: '"{}/{}"'.format(custom_songs_path, song_path), songs_paths))
+        count = 0
         for full_path_song in full_path_songs:
+            print('Deleting {}'.format(full_path_song))
             command = 'rm -rf {}'.format(full_path_song)
             res = self.device.shell(command)
             if res is not None and len(res) > 0:
                 print(res)
+            else:
+                count += 1
+        print('Deleted: {}'.format(count))

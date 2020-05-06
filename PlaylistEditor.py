@@ -245,7 +245,7 @@ class PlaylistEditor(object):
         print('Songs: {}'.format(song_count))
 
     def get_songs(self):
-        return self.config_file.get_songs(self.get_playlist_filter())\
+        return self.config_file.get_songs(self.get_playlist_filter())
 
     def auto_get_bookmarked_to_trash(self):
         if self.args.auto_trash_source is not None:
@@ -281,6 +281,21 @@ class PlaylistEditor(object):
             trash_config.append(song_id)
             if song_id in songs_dict:
                 trash_config.yaml_add_eol_comment(songs_dict[song_id].name, len(trash_config) - 1)
+
+        # cleaning trash from configuration
+        final_trash_set = set(trash_config)
+
+        pre_defined_playlists = EditorConfig().config['PreDefinedPlaylists']
+        for pre_defined_playlist in pre_defined_playlists:
+            pre_defined_playlist_set = set(pre_defined_playlist)
+            songs_to_delete = pre_defined_playlist_set.intersection(final_trash_set)
+            for song_to_delete in songs_to_delete:
+                pre_defined_playlist.remove(song_to_delete)
+
+        forced_song_author = EditorConfig().config['ForcedSongAuthor']
+        for song_to_delete in final_trash_set:
+            if song_to_delete in forced_song_author:
+                del forced_song_author[song_to_delete]
 
         EditorConfig().print()
 
