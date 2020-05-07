@@ -4,6 +4,10 @@ The goal of this project is to allow auto ordering of custom songs into playlist
 Written in python3.
 
 This project is based on the ability to backup and restore BMBF config, using [PlayList Editor Pro](http://beatsaberquest.com/playlisteditorpro/)
+## Download
+[v1.1.0](https://sourceforge.net/projects/beatsaberplaylisteditor/files/Release/V1.1.0/BeatSaberPlaylistEditor.zip/download)
+* This is a compiled version with all python dependencies (collected with pyinstaller) packed into a single executable
+* Windows x64
 ## Terminology
 * `BMBF`: the mechanism that controls custom songs in BeatSaber on Oculus platform. previously known as `BeatsOn`
 * `default playlists` - The default BeatSaber playlists (OST1, OST2, etc.)
