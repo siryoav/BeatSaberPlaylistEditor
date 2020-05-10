@@ -125,7 +125,7 @@ Use `python main.py --empty-trash-from-device`
 * Be aware that you should wait for BMBF to finish processing the new config, sometimes I had to wait for the "Sync BeatSaber" red button to show up and let it finish.
     * Also, many times I had `PlayList Editor Pro` throw an error (connection timeout for example) - just click continue.
 ### Example editor config
-* Example editor [config.yaml.txt](https://github.com/siryoav/BeatSaberPlaylistEditor/files/4464453/config.yam.txt)
+* Example editor [config.yaml.txt](https://github.com/siryoav/BeatSaberPlaylistEditor/files/4605513/config.yaml.txt)
 ### Recommended workflow
 #### Adding songs
 * Use [Sublime](https://www.sublimetext.com/) to view your current version of `playlists.yaml` and update it with the application while reading through it.
